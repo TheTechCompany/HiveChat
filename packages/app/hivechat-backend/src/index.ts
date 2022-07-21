@@ -21,7 +21,6 @@ import schema from './schema';
         schema: {
             typeDefs,
             resolvers,
-            // driver
         },
     })
 
