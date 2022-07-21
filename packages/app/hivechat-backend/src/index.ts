@@ -20,8 +20,8 @@ import schema from './schema';
         dev: false,
         schema: {
             typeDefs,
-            resolvers,
-        },
+            resolvers
+        }
     })
 
     await graphServer.init()
