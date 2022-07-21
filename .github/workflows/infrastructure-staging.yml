@@ -151,6 +151,8 @@ jobs:
       - run: yarn
         working-directory: ./packages/infrastructure
 
+      - run: aws eks update-kubeconfig --name hexhive-cluster-eksCluster-506b63f
+
       - name: Setup stack
         run: |
           echo "STACK_NAME=ultraviolet/hivechat-staging" >> $GITHUB_ENV
