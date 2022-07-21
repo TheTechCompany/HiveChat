@@ -217,9 +217,6 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/setup-pulumi@v2
 
-      - run: pulumi stack select ultraviolet/hivechat-staging
-        working-directory: ./packages/infrastructure
-
       - run: mkdir ~/.kube/
 
       - name: Setup DB stack
