@@ -4,11 +4,11 @@ import {nanoid} from 'nanoid'
 export default (prisma: PrismaClient) => {
     const typeDefs = `
         extend type Query {
-            messages(channel: String): [Message]
+            messages(channel: String, recipient: String): [Message]
         }
 
         extend type Mutation {
-            sendMessage(channel: String, message: String): Message
+            sendMessage(channel: String, recipient: String, message: String): Message
         }
 
         type Message {
@@ -35,7 +35,10 @@ export default (prisma: PrismaClient) => {
             messages: async (root: any, args: any, context: any) => {
                 const messages = await prisma.message.findMany({
                     where: {
-                        channel: args.channel
+                        OR: [
+                            {channel: { id: args.channel, organisation: context?.jwt?.organisation } },
+                            {sender:  args.recipient, recipient: context?.jwt?.id}
+                        ]
                     }
                 })
                 return messages.map((x) => ({...x, sender: {id: x.sender}}))
@@ -43,10 +46,17 @@ export default (prisma: PrismaClient) => {
         },
         Mutation: {
             sendMessage: async (root: any, args: any, context: any) => {
+                let recipient = {};
+                if(args.recipient){
+                    recipient = {recipient: args.recipient}
+                }
+                if(args.channel){
+                    recipient = {...recipient, channelId: args.channel}
+                }
                 return await prisma.message.create({
                     data: {
                         id: nanoid(),
-                        channel: args.channel,
+                        ...recipient,
                         message: args.message,
                         sentAt: new Date(),
                         sender: context?.jwt?.id

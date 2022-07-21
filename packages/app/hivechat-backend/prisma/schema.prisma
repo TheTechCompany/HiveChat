@@ -10,15 +10,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Channel {
+  id String @id
+
+  name String
+
+  members String[]
+
+  messages Message[] @relation(name: "ChannelMessages")
+
+  createdAt DateTime @default(now())
+  createdBy String
+
+  organisation String
+}
 
 model Message {
   id String @id
   
-  channel String
-
   message String
 
   sentAt DateTime @default(now())
 
   sender String
+
+  recipient String?
+
+  channel Channel? @relation(name: "ChannelMessages", fields: [channelId], references: [id])
+  channelId String?
 }

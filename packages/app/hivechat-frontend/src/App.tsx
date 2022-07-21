@@ -5,6 +5,7 @@ import { useQuery, gql, useMutation, useApolloClient } from '@apollo/client'
 
 export default () => {
 
+    const [ recipient, setRecipient ] = useState('');
     const [ channel, setChannel ] = useState('');
 
     const client = useApolloClient();
@@ -20,9 +21,9 @@ export default () => {
     `)
 
     const { data : messageData } = useQuery(gql`
-        query GetMessages ($channel: String) {
+        query GetMessages ($channel: String, $recipient: String) {
 
-            messages(channel: $channel){
+            messages(channel: $channel, recipient: $recipient) {
                 id
                 sentAt
                 sender {
@@ -34,7 +35,7 @@ export default () => {
         }
     `, {
         variables: {
-            channel
+            recipient
         }
     })
 
@@ -43,8 +44,8 @@ export default () => {
     const messages = messageData?.messages || [];
 
     const [ sendMessage ] = useMutation(gql`
-        mutation SendMessage($channel: String!, $message: String!) {
-            sendMessage(channel: $channel, message: $message) {
+        mutation SendMessage($channel: String, $recipient: String, $message: String!) {
+            sendMessage(channel: $channel, recipient: $recipient, message: $message) {
                 id
             }
         }
@@ -65,7 +66,7 @@ export default () => {
                 <List>
                     {users.map((user) => (
                         <ListItem 
-                            onClick={() => setChannel(user.id)}
+                            onClick={() => setRecipient(user.id)}
                             button 
                             sx={{display: 'flex', alignItems: 'center'}}>
                            <Box sx={{
@@ -89,7 +90,7 @@ export default () => {
                 <MessageWindow
                     messages={messages}
                     onSendMessage={async (message) => {
-                        sendMessage({variables: {channel, message}}).then(() => {
+                        sendMessage({variables: {channel, recipient, message}}).then(() => {
                             refetch()
                         });
                         // setMessages([...messages, {message, sender: '102'}])

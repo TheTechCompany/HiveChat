@@ -1,8 +1,10 @@
 import { mergeTypeDefs, mergeResolvers } from '@graphql-tools/merge'
 import message from './message'
 import { PrismaClient } from '@prisma/client'
+import channel from './channel'
 
 export default (prisma: PrismaClient) => {
+    const { typeDefs: channelTypeDefs, resolvers: channelResolvers } = channel(prisma);
     const { typeDefs: messageTypeDefs, resolvers: messageResolvers } = message(prisma);
 
     const typeDefs = `
@@ -21,10 +23,12 @@ export default (prisma: PrismaClient) => {
         typeDefs: mergeTypeDefs([
             typeDefs,
             messageTypeDefs,
+            channelTypeDefs,
         ]),
         resolvers: mergeResolvers([
             resolvers,
-            messageResolvers
+            messageResolvers,
+            channelResolvers
         ])
     }
 }
