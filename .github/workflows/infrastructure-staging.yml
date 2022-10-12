@@ -151,7 +151,7 @@ jobs:
       - run: yarn
         working-directory: ./packages/infrastructure
 
-      - run: aws eks update-kubeconfig --name hexhive-cluster-eksCluster-506b63f
+      # - run: aws eks update-kubeconfig --name hexhive-cluster-eksCluster-506b63f
 
       - name: Setup stack
         run: |
@@ -239,7 +239,7 @@ jobs:
           echo "DB_NAME=ultraviolet/hexhive-db/db-prod" >> $GITHUB_ENV
         if: ${{ github.ref == 'refs/heads/master' }}
         
-      - run: pulumi -s ultraviolet/base/prod stack output k3sconfig > ~/.kube/config
+      - run: pulumi -s ultraviolet/base-infrastructure/prod stack output k3sconfig > ~/.kube/config
 
       - run: echo "::set-output name=postgres::$(pulumi stack -s ${{ env.DB_NAME }} output postgres_name)" 
         working-directory: ./packages/infrastructure
