@@ -8,6 +8,7 @@ export const Deployment = async (provider: Provider, rootServer: string, dbUrl: 
     let suffix = config.require('suffix');
     let imageTag = process.env.IMAGE_TAG 
 
+    
     const appName = `hive-chat-${suffix}`;
     const appLabels = { appClass: appName };
    
